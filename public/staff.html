@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Axios · Staff · Salud Digna</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="js/chart.umd.min.js"></script>
+<style>
+:root{
+  --g9:#052e16;--g8:#14532d;--g7:#2FA065;--g6:#3CB371;--g5:#2FA065;--g4:#3CB371;--g3:#1F3D34;--g1:#dcfce7;
+  --a5:#FF8C42;--a4:#FF7A1A;--a1:#3A2A1A;
+  --r5:#dc2626;--r4:#E57373;--r1:#fee2e2;
+  --b5:#2563eb;--b4:#60a5fa;--b1:#dbeafe;
+  --p5:#7c3aed;--p4:#a78bfa;--p1:#ede9fe;
+  --s9:#0F1A17;--s8:#162522;--s7:#1E2F2B;--s6:#1c2333;--s5:#2d3748;--s4:#A7B8AF;--s3:#718096;--s2:#a0aec0;--s1:#e2e8f0;
+  --wh:#E6F1EC;
+  --surf:rgba(255,255,255,0.03);
+  --bord:#2C423D;
+  --bord-h:rgba(255,255,255,0.13);
+  --r-xs:6px;--r-sm:10px;--r-md:16px;--r-lg:22px;--r-xl:30px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:#0F1A17;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+button,input,select,textarea{font-family:'DM Sans',sans-serif;}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--s5);border-radius:2px;}
+
+/* PHONE FRAME */
+.phone{width:390px;height:844px;background:var(--s9);border-radius:48px;overflow:hidden;position:relative;box-shadow:0 40px 120px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.07);display:flex;flex-direction:column;}
+.phone-notch{height:44px;background:#000;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;}
+.notch-pill{width:120px;height:32px;background:#000;border-radius:0 0 20px 20px;position:absolute;top:0;}
+.phone-status{display:flex;align-items:center;justify-content:space-between;padding:0 28px;width:100%;color:#fff;font-size:12px;font-weight:600;z-index:1;}
+
+/* SCREENS */
+.screen{flex:1;display:none;flex-direction:column;overflow:hidden;}
+.screen.on{display:flex;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes aiSlideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* LOGIN */
+#s-login{background:var(--s9);align-items:center;justify-content:center;padding:16px;overflow-y:auto;animation:fadeUp .35s ease;}
+.login-bg{position:absolute;inset:0;background:radial-gradient(ellipse 600px 400px at 50% -80px,rgba(17,107,66,.25) 0%,transparent 70%),radial-gradient(ellipse 300px 250px at 90% 85%,rgba(46,204,130,.06) 0%,transparent 60%);pointer-events:none;}
+.login-card{width:100%;max-width:340px;background:var(--s8);border-radius:var(--r-xl);border:1px solid var(--bord);overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.6);position:relative;z-index:1;}
+.lc-top{padding:28px 28px 20px;background:linear-gradient(160deg,var(--g8) 0%,rgba(17,107,66,.3) 100%);text-align:center;border-bottom:1px solid var(--bord);}
+.lc-logo{width:64px;height:64px;border-radius:16px;background:transparent;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;overflow:hidden;}
+.lc-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--wh);margin-bottom:3px;}
+.lc-sub{font-size:12px;color:var(--s3);}
+.lc-body{padding:22px 24px;}
+.field-group{display:flex;flex-direction:column;gap:12px;}
+.lfield{display:flex;flex-direction:column;gap:4px;}
+.lfield label{font-size:10px;font-weight:600;color:var(--s3);text-transform:uppercase;letter-spacing:.8px;}
+.linput{background:var(--s7);border:1px solid var(--s5);border-radius:var(--r-sm);padding:10px 13px;color:var(--wh);font-size:14px;outline:none;transition:border-color .15s,box-shadow .15s;}
+.linput:focus{border-color:var(--g5);box-shadow:0 0 0 3px rgba(26,153,96,.12);}
+.linput::placeholder{color:var(--s4);}
+.btn-primary-dark{width:100%;padding:12px;border-radius:var(--r-sm);background:var(--g6);border:none;color:var(--wh);font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;margin-top:4px;}
+.btn-primary-dark:hover{background:var(--g5);}
+.login-hint{font-size:11px;color:var(--s4);text-align:center;margin-top:12px;}
+.staff-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:20px;padding:4px 12px;font-size:10px;font-weight:700;color:var(--a4);margin-bottom:14px;}
+
+/* SHARED HEADER */
+.app-header{background:var(--s8);padding:14px 16px 12px;border-bottom:1px solid var(--bord);flex-shrink:0;display:flex;align-items:center;gap:10px;}
+.hdr-title{font-size:15px;font-weight:700;color:var(--wh);}
+.hdr-sub{font-size:11px;color:var(--s3);margin-top:1px;}
+.hdr-badge-a{background:rgba(245,158,11,.12);color:var(--a4);font-size:11px;font-weight:700;padding:5px 11px;border-radius:20px;display:flex;align-items:center;gap:4px;flex-shrink:0;margin-left:auto;}
+
+/* BOTTOM NAV */
+.bottom-nav{background:var(--s8);border-top:1px solid var(--bord);padding:8px 0 14px;display:flex;flex-shrink:0;}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;padding:5px 0;transition:all .15s;}
+.nav-btn svg{width:20px;height:20px;color:var(--s4);transition:color .15s;}
+.nav-btn span{font-size:9px;color:var(--s4);font-weight:500;transition:color .15s;}
+.nav-btn.active svg{color:var(--g4);}
+.nav-btn.active span{color:var(--g4);font-weight:700;}
+
+/* SCROLL */
+.scroll-body{flex:1;overflow-y:auto;padding:14px 14px 20px;}
+.scroll-body::-webkit-scrollbar{display:none;}
+
+/* CARDS */
+.dark-card{background:var(--s8);border-radius:var(--r-lg);border:1px solid var(--bord);padding:16px;margin-bottom:10px;}
+.dc-label{font-size:10px;font-weight:600;color:var(--s4);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;}
+.stat-card{background:var(--s8);border:1px solid var(--bord);border-radius:14px;padding:14px;}
+.stat-val{font-family:'DM Mono',monospace;font-size:26px;font-weight:700;color:var(--wh);line-height:1;}
+.stat-label{font-size:10px;color:var(--s3);margin-top:4px;}
+.stat-delta{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;margin-top:6px;display:inline-block;}
+.sd-g{background:rgba(46,204,130,.12);color:var(--g4);}
+.sd-a{background:rgba(245,158,11,.12);color:var(--a4);}
+.sd-r{background:rgba(248,113,113,.12);color:var(--r4);}
+
+/* PATIENT LIST */
+.pat-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--bord);cursor:pointer;transition:all .15s;}
+.pat-row:last-child{border-bottom:none;}
+.pat-row:active{opacity:.7;}
+.pat-av{width:36px;height:36px;border-radius:50%;background:var(--s7);border:1px solid var(--bord);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.pat-name{font-size:13px;font-weight:600;color:var(--wh);}
+.pat-detail{font-size:11px;color:var(--s3);margin-top:1px;}
+.pat-status{margin-left:auto;font-size:10px;font-weight:700;padding:4px 9px;border-radius:20px;flex-shrink:0;}
+.ps-wait{background:rgba(245,158,11,.1);color:var(--a4);}
+.ps-active{background:rgba(46,204,130,.1);color:var(--g4);}
+.ps-done{background:var(--s7);color:var(--s3);}
+.ps-alert{background:rgba(248,113,113,.1);color:var(--r4);}
+
+/* ALERT STRIP */
+.alert-row{display:flex;gap:10px;align-items:flex-start;padding:11px 13px;border-radius:12px;margin-bottom:8px;border-left:3px solid;}
+.ar-r{background:rgba(248,113,113,.08);border-color:var(--r4);}
+.ar-a{background:rgba(245,158,11,.08);border-color:var(--a4);}
+.ar-g{background:rgba(46,204,130,.08);border-color:var(--g4);}
+.ar-title{font-size:12px;font-weight:700;color:var(--wh);margin-bottom:2px;}
+.ar-desc{font-size:11px;color:var(--s2);line-height:1.5;}
+.ar-time{font-size:10px;color:var(--s4);margin-top:3px;font-family:'DM Mono',monospace;}
+
+/* QUEUE RING */
+.queue-header{background:linear-gradient(135deg,var(--g8),rgba(17,107,66,.2));padding:18px 16px;flex-shrink:0;border-bottom:1px solid var(--bord);}
+.q-stats{display:flex;gap:14px;justify-content:space-around;}
+.q-stat{text-align:center;}
+.q-stat-val{font-family:'DM Mono',monospace;font-size:28px;font-weight:700;color:var(--g4);line-height:1;}
+.q-stat-lbl{font-size:9px;color:var(--s4);text-transform:uppercase;letter-spacing:.06em;margin-top:3px;}
+
+/* PATIENT DETAIL MODAL */
+.pat-modal{position:absolute;inset:0;background:rgba(7,9,15,.8);backdrop-filter:blur(4px);z-index:100;display:none;flex-direction:column;justify-content:flex-end;}
+.pat-modal.open{display:flex;}
+.pat-sheet{background:var(--s8);border-radius:28px 28px 0 0;border-top:1px solid var(--bord);max-height:85%;display:flex;flex-direction:column;animation:aiSlideUp .35s cubic-bezier(.34,1.4,.64,1) both;}
+.pat-sheet-handle{width:36px;height:4px;border-radius:2px;background:var(--s5);margin:12px auto 0;}
+.pat-sheet-scroll{flex:1;overflow-y:auto;padding:16px;}
+.pat-sheet-scroll::-webkit-scrollbar{display:none;}
+
+/* INFO GRID */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.ig-key{font-size:9px;color:var(--s4);text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px;}
+.ig-val{font-size:13px;font-weight:500;color:var(--wh);}
+.tag-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+.dtag{padding:3px 9px;border-radius:10px;font-size:11px;font-weight:500;}
+.dtag-cond{background:rgba(248,113,113,.12);color:var(--r4);}
+.dtag-allergy{background:rgba(245,158,11,.12);color:var(--a4);}
+.dtag-lang{background:rgba(96,165,250,.12);color:var(--b4);}
+.dtag-blood{background:rgba(167,139,250,.12);color:var(--p4);}
+
+/* TOAST */
+.toast{position:absolute;top:12px;left:12px;right:12px;background:var(--s8);border-radius:16px;padding:13px;display:flex;align-items:center;gap:10px;box-shadow:0 12px 40px rgba(0,0,0,.5);z-index:200;transform:translateY(-120px);opacity:0;transition:all .4s cubic-bezier(.34,1.4,.64,1);}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast-icon{width:34px;height:34px;border-radius:10px;background:rgba(46,204,130,.15);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.toast-msg{font-size:12px;color:#fff;margin-top:2px;line-height:1.4;}
+
+/* AI PANEL */
+.ai-chat-wrap{background:var(--s7);border:1px solid var(--bord);border-radius:16px;overflow:hidden;margin-bottom:12px;}
+.ai-chat-head{background:linear-gradient(135deg,var(--s6),rgba(124,58,237,.1));padding:11px 13px;display:flex;align-items:center;border-bottom:1px solid var(--bord);}
+.ai-msg-list{padding:12px;display:flex;flex-direction:column;gap:8px;max-height:180px;overflow-y:auto;}
+.ai-msg-list::-webkit-scrollbar{display:none;}
+.ai-msg{padding:9px 11px;border-radius:11px;font-size:12px;line-height:1.55;}
+.ai-msg.bot{background:var(--s6);color:var(--s2);border-bottom-left-radius:3px;}
+.ai-msg.user{background:rgba(46,204,130,.1);border:1px solid rgba(46,204,130,.2);color:var(--g3);margin-left:20%;border-bottom-right-radius:3px;}
+.ai-msg-from{font-size:9px;font-weight:700;color:var(--p4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;}
+.ai-typing{display:inline-flex;gap:3px;align-items:center;padding:2px 0;}
+.ai-typing span{width:5px;height:5px;border-radius:50%;background:var(--s3);animation:blink 1.2s ease infinite;}
+.ai-typing span:nth-child(2){animation-delay:.2s;}
+.ai-typing span:nth-child(3){animation-delay:.4s;}
+.ai-inp-row{display:flex;gap:7px;padding:10px 12px;border-top:1px solid var(--bord);}
+.ai-inp{flex:1;background:var(--s6);border:1px solid var(--s5);border-radius:9px;padding:8px 11px;color:var(--wh);font-size:12px;outline:none;}
+.ai-inp:focus{border-color:var(--p4);}
+.ai-inp::placeholder{color:var(--s4);}
+.ai-send-btn{background:var(--p5);border:none;border-radius:9px;color:#fff;width:32px;cursor:pointer;font-size:14px;font-weight:700;transition:all .15s;}
+.ai-send-btn:active{transform:scale(.94);}
+
+.btn-sm{display:inline-flex;align-items:center;gap:4px;padding:7px 13px;border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;border:none;transition:all .15s;font-family:'DM Sans',sans-serif;}
+.btn-sm-g{background:#116b42;color:#fff;}
+.btn-sm-r{background:var(--r5);color:#fff;}
+.btn-sm-ghost{background:transparent;border:1px solid var(--s5);color:var(--s2);}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="phone-notch">
+    <div class="notch-pill"></div>
+    <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">
+    <div class="toast-icon" id="t-ico">✅</div>
+    <div><div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Axios Staff</div><div class="toast-msg" id="t-msg"></div></div>
+  </div>
+
+  <!-- ══ S-LOGIN ══ -->
+  <div class="screen on" id="s-login">
+    <div class="login-bg"></div>
+    <div class="login-card">
+      <div class="lc-top">
+        <div class="lc-logo"><img src="data:image/png;base64,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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf/9k=" style="width:100%;height:100%;object-fit:contain;" alt="Axios"></div>
+        <div class="lc-title">Axios Staff</div>
+        <div class="lc-sub">Panel de gestión clínica · Salud Digna</div>
+      </div>
+      <div class="lc-body">
+        <div style="text-align:center;margin-bottom:16px;">
+          <div class="staff-badge">🔒 Acceso exclusivo personal autorizado</div>
+        </div>
+        <div class="field-group">
+          <div class="lfield"><label>Correo institucional</label><input class="linput" id="s-email" placeholder="nombre@saluddigna.mx" type="email" onkeypress="if(event.key==='Enter')doStaffLogin()"></div>
+          <div class="lfield"><label>Contraseña</label><input class="linput" id="s-pass" placeholder="••••••••" type="password" onkeypress="if(event.key==='Enter')doStaffLogin()"></div>
+          <button class="btn-primary-dark" onclick="doStaffLogin()">Entrar al panel →</button>
+        </div>
+        <div class="login-hint" style="margin-top:14px;">¿Problemas de acceso? <span style="color:var(--g4);">Contacta a sistemas</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ S-DASHBOARD (resumen del día) ══ -->
+  <div class="screen" id="s-dash">
+    <div class="app-header">
+      <div>
+        <div class="hdr-title">Panel de hoy</div>
+        <div class="hdr-sub" id="dash-date">Lunes 30 Mar · Salud Digna Campeche</div>
+      </div>
+      <div class="hdr-badge-a">
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--a4);animation:blink 1.5s ease infinite;"></div>
+        Staff
+      </div>
+    </div>
+    <div class="scroll-body">
+      <!-- Estadísticas del día -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-val" id="stat-total">0</div>
+          <div class="stat-label">Pacientes hoy</div>
+          <div class="stat-delta sd-g">↑ activos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-wait">0</div>
+          <div class="stat-label">En espera</div>
+          <div class="stat-delta sd-a">en cola</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-done">0</div>
+          <div class="stat-label">Atendidos</div>
+          <div class="stat-delta sd-g">completados</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-alerts">0</div>
+          <div class="stat-label">Alertas activas</div>
+          <div class="stat-delta sd-r">requieren atención</div>
+        </div>
+      </div>
+
+      <!-- Alertas clínicas del sistema -->
+      <div class="dark-card">
+        <div class="dc-label">⚡ Alertas clínicas activas</div>
+        <div id="alert-list">
+          <div class="alert-row ar-r">
+            <div>
+              <div class="ar-title">🩸 Glucosa crítica — Paciente B-04</div>
+              <div class="ar-desc">Valor: 310 mg/dL. Requiere atención inmediata antes del laboratorio.</div>
+              <div class="ar-time">09:18 · Módulo 2</div>
+            </div>
+          </div>
+          <div class="alert-row ar-a">
+            <div>
+              <div class="ar-title">💊 Alergia detectada — Paciente B-07</div>
+              <div class="ar-desc">Penicilina alérgico. Verificar antes de proceder con el procedimiento.</div>
+              <div class="ar-time">09:31 · Módulo 3</div>
+            </div>
+          </div>
+          <div class="alert-row ar-a">
+            <div>
+              <div class="ar-title">⏱️ Tiempo de espera elevado — Cola B</div>
+              <div class="ar-desc">Promedio: 28 min. Capacidad al 91%. Considerar redistribución.</div>
+              <div class="ar-time">09:44 · Sistema</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumen de servicios -->
+      <div class="dark-card">
+        <div class="dc-label">Servicios activos</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:12px;color:var(--s2);">🔬 Laboratorio</span>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="height:6px;width:80px;background:var(--s6);border-radius:3px;overflow:hidden;"><div style="height:100%;width:87%;background:linear-gradient(90deg,var(--a5),var(--a4));border-radius:3px;"></div></div>
+              <span style="font-size:11px;color:var(--a4);font-weight:700;font-family:'DM Mono',monospace;">87%</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:12px;color:var(--s2);">🫀 Cardiología</span>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="height:6px;width:80px;background:var(--s6);border-radius:3px;overflow:hidden;"><div style="height:100%;width:72%;background:linear-gradient(90deg,var(--g6),var(--g4));border-radius:3px;"></div></div>
+              <span style="font-size:11px;color:var(--g4);font-weight:700;font-family:'DM Mono',monospace;">72%</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:12px;color:var(--s2);">🔭 Imagenología</span>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="height:6px;width:80px;background:var(--s6);border-radius:3px;overflow:hidden;"><div style="height:100%;width:55%;background:linear-gradient(90deg,var(--g6),var(--g4));border-radius:3px;"></div></div>
+              <span style="font-size:11px;color:var(--g4);font-weight:700;font-family:'DM Mono',monospace;">55%</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:12px;color:var(--s2);">💊 Farmacia</span>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="height:6px;width:80px;background:var(--s6);border-radius:3px;overflow:hidden;"><div style="height:100%;width:35%;background:linear-gradient(90deg,var(--g6),var(--g4));border-radius:3px;"></div></div>
+              <span style="font-size:11px;color:var(--g4);font-weight:700;font-family:'DM Mono',monospace;">35%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav" id="nav-dash">
+      <button class="nav-btn active" onclick="navStaff('s-dash',0)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Panel</span></button>
+      <button class="nav-btn" onclick="navStaff('s-queue',1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg><span>Cola</span></button>
+      <button class="nav-btn" onclick="navStaff('s-patients',2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg><span>Pacientes</span></button>
+      <button class="nav-btn" onclick="navStaff('s-ia',3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg><span>Axios IA</span></button>
+    </div>
+  </div>
+
+  <!-- ══ S-QUEUE (cola en tiempo real) ══ -->
+  <div class="screen" id="s-queue">
+    <div class="queue-header">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--wh);">Colas por Módulo Operativo</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+           <div style="font-size:10px;color:var(--g4);font-weight:700;display:flex;align-items:center;gap:4px;"><div style="width:5px;height:5px;border-radius:50%;background:var(--g4);animation:blink 1.5s ease infinite;"></div>LIVE</div>
+        </div>
+      </div>
+      <div class="q-stats">
+        <div class="q-stat"><div class="q-stat-val" id="q-stat-wait">0</div><div class="q-stat-lbl">En cola general</div></div>
+        <div class="q-stat"><div class="q-stat-val" id="q-stat-mod">0</div><div class="q-stat-lbl">Pacientes Activos</div></div>
+      </div>
+    </div>
+    <div class="scroll-body" style="padding-top:10px;">
+      <div id="queue-active-turn"></div>
+      <div class="dc-label" style="padding:0 2px;margin-bottom:8px;">Próximos en cola</div>
+      <div id="queue-list">
+        <!-- Generado por JS -->
+      </div>
+    </div>
+    <div class="bottom-nav" id="nav-queue">
+      <button class="nav-btn" onclick="navStaff('s-dash',0)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Panel</span></button>
+      <button class="nav-btn active" onclick="navStaff('s-queue',1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg><span>Cola</span></button>
+      <button class="nav-btn" onclick="navStaff('s-patients',2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg><span>Pacientes</span></button>
+      <button class="nav-btn" onclick="navStaff('s-ia',3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg><span>Axios IA</span></button>
+    </div>
+  </div>
+
+  <!-- ══ S-PATIENTS (lista de pacientes del día) ══ -->
+  <div class="screen" id="s-patients">
+    <div class="app-header">
+      <div><div class="hdr-title">Pacientes del día</div><div class="hdr-sub">30 Mar 2026 · Todos los servicios</div></div>
+      <button onclick="openAddPatModal()" style="margin-left:auto;background:var(--g6);border:none;border-radius:9px;color:var(--wh);font-size:11px;font-weight:700;padding:6px 11px;cursor:pointer;">+ Registrar</button>
+    </div>
+    <div class="scroll-body" style="padding-top:8px;">
+      <!-- Búsqueda -->
+      <div style="background:var(--s7);border:1px solid var(--bord);border-radius:12px;padding:9px 13px;display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--s4)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="pat-search" placeholder="Buscar por nombre o folio..." style="background:transparent;border:none;outline:none;color:var(--wh);font-size:12px;flex:1;font-family:'DM Sans',sans-serif;" oninput="filterPatients(this.value)">
+      </div>
+      <div id="patient-list"></div>
+    </div>
+    <div class="bottom-nav" id="nav-patients">
+      <button class="nav-btn" onclick="navStaff('s-dash',0)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Panel</span></button>
+      <button class="nav-btn" onclick="navStaff('s-queue',1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg><span>Cola</span></button>
+      <button class="nav-btn active" onclick="navStaff('s-patients',2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg><span>Pacientes</span></button>
+      <button class="nav-btn" onclick="navStaff('s-ia',3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg><span>Axios IA</span></button>
+    </div>
+  </div>
+
+  <!-- ══ S-IA (Axios IA para staff) ══ -->
+  <div class="screen" id="s-ia">
+    <div class="app-header">
+      <div><div class="hdr-title">Axios IA</div><div class="hdr-sub">Asistente clínico para staff</div></div>
+      <div style="margin-left:auto;background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.25);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700;color:var(--p4);">GPT-4o ✦</div>
+    </div>
+    <div class="scroll-body">
+      <div class="ai-chat-wrap">
+        <div class="ai-chat-head">
+          <div style="width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,var(--p5),#9333ea);display:flex;align-items:center;justify-content:center;font-size:13px;">🤖</div>
+          <div style="margin-left:8px;">
+            <div style="font-size:12px;font-weight:700;color:var(--wh);">Axios IA · Copiloto clínico</div>
+            <div style="font-size:10px;color:var(--s4);">Solo consultas médicas y operativas</div>
+          </div>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:4px;">
+            <div style="width:6px;height:6px;border-radius:50%;background:var(--g4);animation:blink 1.5s ease infinite;"></div>
+            <span style="font-size:9px;color:var(--g4);font-weight:700;">EN LÍNEA</span>
+          </div>
+        </div>
+        <div class="ai-msg-list" id="staffAiMsgList" style="max-height:300px;">
+          <div class="ai-msg bot">
+            <div class="ai-msg-from">✦ Axios IA Staff</div>
+            Hola. Soy tu copiloto clínico. Puedo ayudarte a revisar perfiles de pacientes, interpretar alertas, sugerir acciones ante condiciones críticas o responder dudas operativas del día. ¿En qué te apoyo?
+          </div>
+        </div>
+        <div class="ai-inp-row">
+          <input class="ai-inp" id="staffAiInp" placeholder="Consulta sobre un paciente o alerta..." onkeypress="if(event.key==='Enter')sendStaffAI()">
+          <button class="ai-send-btn" onclick="sendStaffAI()" id="staffSendBtn">→</button>
+        </div>
+      </div>
+
+      <!-- Acciones rápidas -->
+      <div class="dark-card">
+        <div class="dc-label">Acciones rápidas</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <button onclick="quickStaffAsk('Resumen de alertas críticas del día')" style="background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);border-radius:10px;padding:10px 13px;text-align:left;cursor:pointer;color:var(--r4);font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;">🚨 Resumen de alertas críticas</button>
+          <button onclick="quickStaffAsk('Lista de pacientes con alergias activas hoy')" style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:10px 13px;text-align:left;cursor:pointer;color:var(--a4);font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;">⚠️ Pacientes con alergias activas</button>
+          <button onclick="quickStaffAsk('Estado actual de capacidad por módulo y sugerencias de redistribución')" style="background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.2);border-radius:10px;padding:10px 13px;text-align:left;cursor:pointer;color:var(--b4);font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;">📊 Capacidad y redistribución</button>
+          <button onclick="quickStaffAsk('Protocolo de atención para paciente con glucosa mayor a 300 mg/dL')" style="background:rgba(46,204,130,.08);border:1px solid rgba(46,204,130,.2);border-radius:10px;padding:10px 13px;text-align:left;cursor:pointer;color:var(--g4);font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;">📋 Protocolo glucosa crítica</button>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav" id="nav-ia">
+      <button class="nav-btn" onclick="navStaff('s-dash',0)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Panel</span></button>
+      <button class="nav-btn" onclick="navStaff('s-queue',1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg><span>Cola</span></button>
+      <button class="nav-btn" onclick="navStaff('s-patients',2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg><span>Pacientes</span></button>
+      <button class="nav-btn active" onclick="navStaff('s-ia',3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg><span>Axios IA</span></button>
+    </div>
+  </div>
+
+  <!-- PATIENT DETAIL MODAL -->
+  <div class="pat-modal" id="patModal" onclick="if(event.target===this)closePatModal()">
+    <div class="pat-sheet">
+      <div class="pat-sheet-handle"></div>
+      <div class="pat-sheet-scroll" id="patSheetContent"></div>
+    </div>
+  </div>
+
+  <!-- ADD PATIENT MODAL -->
+  <div class="pat-modal" id="addPatModal" onclick="if(event.target===this)closeAddPatModal()">
+    <div class="pat-sheet">
+      <div class="pat-sheet-handle"></div>
+      <div class="pat-sheet-scroll" style="display:flex;flex-direction:column;gap:12px;">
+        <h3 style="color:var(--wh);font-family:'Syne',sans-serif;margin-bottom:8px;">Nuevo Registro (Staff)</h3>
+        <div class="lfield"><label>Nombre(s)</label><input class="linput" id="ap-nombre" placeholder="Ej. Juan"></div>
+        <div class="lfield"><label>Apellidos</label><input class="linput" id="ap-apellidos" placeholder="Ej. Pérez"></div>
+        <div class="lfield"><label>Servicio Asignado</label>
+        <select class="linput" id="ap-servicio" style="background:var(--s7);color:#fff;">
+          <option value="Laboratorio">Laboratorio</option>
+          <option value="Rayos X">Rayos X</option>
+          <option value="Ultrasonido">Ultrasonido</option>
+          <option value="Electrocardiograma">Electrocardiograma</option>
+          <option value="Nutrición">Nutrición</option>
+          <option value="Tomografía">Tomografía</option>
+        </select>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+          <input type="checkbox" id="ap-urgente" style="width:16px;height:16px;">
+          <label for="ap-urgente" style="font-size:12px;color:var(--wh);">🚨 ¿Es urgencia médica? (Ej. Sangrado)</label>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+          <input type="checkbox" id="ap-cita" style="width:16px;height:16px;">
+          <label for="ap-cita" style="font-size:12px;color:var(--wh);">📅 ¿El paciente cuenta con cita?</label>
+        </div>
+        <button class="btn-primary-dark" style="margin-top:10px;" onclick="submitNewPatient()">Registrar y Enviar a Cola</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+
+<script>
+// ══ DATA ══
+let patientsData = [];
+
+async function loadPatients() {
+  try {
+    const res = await fetch('http://172.20.28.28:3001/api/pacientes');
+    if (!res.ok) throw new Error('API error');
+    const raw = await res.json();
+    patientsData = raw.map((p, idx) => ({
+      id: 'P-' + String(idx + 1).padStart(2, '0'),
+      nombre: p.nombreCompleto || p.nombre || '',
+      edad: p.edad || '—',
+      servicio: p.servicioHoy || '—',
+      seguro: p.derechohabiencia || '—',
+      status: p.status || 'wait',
+      gravedad: p.gravedad || 'verde',
+      alergias: p.alergias && p.alergias.length ? p.alergias : ['Ninguna'],
+      condiciones: p.condiciones && p.condiciones.length ? p.condiciones : ['Ninguna'],
+      folio: p.folio,
+      modulo: p.modulo || '—',
+      estudioActual: p.estudioActual || null
+    }));
+    initDash(); initQueue(); initPatients();
+  } catch (err) {
+    console.error('Fetch error:', err);
+    showToast('⚠️', 'Error conectando a la base de datos', 'amber');
+  }
+}
+
+async function updatePatientStatus(folio, status, estudio = null) {
+  try {
+    let payload = { status, modulo: status === 'ocupado' || status === 'active' ? 'Módulo ' + Math.floor(Math.random()*4+1) : '—' };
+    if (estudio) payload.estudioActual = estudio;
+    if (status === 'next_study') payload.estudioActual = estudio;
+
+    const res = await fetch(`http://172.20.28.28:3001/api/pacientes/folio/${folio}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if(res.ok) {
+       showToast('✅', status === 'next_study' ? 'Estudio completado, ruteando...' : status === 'done' ? 'Paciente retirado' : `Paciente ${status}`, 'green');
+       await loadPatients();
+    }
+  } catch(e) { console.error(e); }
+}
+
+async function deletePatient(folio) {
+  if(!confirm('¿Estás seguro que deseas eliminar este paciente de la base de datos de manera irreversible?')) return;
+  try {
+    const res = await fetch(`http://172.20.28.28:3001/api/pacientes/folio/${folio}`, { method: 'DELETE' });
+    if(res.ok) {
+       showToast('🗑️', 'Paciente eliminado de la BD', 'info');
+       closePatModal();
+       await loadPatients();
+    }
+  } catch(e) { console.error(e); }
+}
+
+function openAddPatModal() { document.getElementById('addPatModal').classList.add('open'); }
+function closeAddPatModal() { document.getElementById('addPatModal').classList.remove('open'); }
+
+async function submitNewPatient() {
+  const nombre = document.getElementById('ap-nombre').value.trim();
+  const apellidos = document.getElementById('ap-apellidos').value.trim();
+  const servicioHoy = document.getElementById('ap-servicio').value;
+  const urgente = document.getElementById('ap-urgente').checked;
+  const conCita = document.getElementById('ap-cita').checked;
+  if(!nombre || !apellidos) return showToast('⚠️','Faltan el nombre o los apellidos','amber');
+  
+  const folio = 'SD-' + new Date().getFullYear() + '-' + Math.floor(10000 + Math.random() * 90000);
+  
+  try {
+     const res = await fetch('http://172.20.28.28:3001/api/pacientes', {
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify({ nombre, apellidos, servicioHoy, folio, status: 'wait', urgente, conCita })
+     });
+     if(res.ok) {
+       showToast('✅', 'Registrado con éxito', 'green');
+       closeAddPatModal();
+       document.getElementById('ap-nombre').value = '';
+       document.getElementById('ap-apellidos').value = '';
+       await loadPatients();
+     } else {
+       showToast('⚠️', 'Error al guardar', 'amber');
+     }
+  } catch(e) { console.error(e); }
+}
+
+// ══ INIT ══
+function initDash() {
+  const total  = patientsData.length;
+  const wait   = patientsData.filter(p => p.status === 'wait').length;
+  const done   = patientsData.filter(p => p.status === 'done').length;
+  const alerts = patientsData.filter(p => p.status === 'alert').length;
+  document.getElementById('stat-total').textContent  = total;
+  document.getElementById('stat-wait').textContent   = wait;
+  document.getElementById('stat-done').textContent   = done;
+  document.getElementById('stat-alerts').textContent = alerts + (patientsData.filter(p=>p.alergias.some(a=>a!=='Ninguna')).length);
+}
+
+function initQueue() {
+  const listEl = document.getElementById('queue-list');
+  const activeContainer = document.getElementById('queue-active-turn');
+  if (activeContainer) activeContainer.innerHTML = '';
+  
+  let activeCount = patientsData.filter(p => p.status === 'active' || p.status === 'ocupado').length;
+  let waitCount = patientsData.filter(p => p.status === 'wait').length;
+  
+  document.getElementById('q-stat-wait').textContent = waitCount + activeCount;
+  document.getElementById('q-stat-mod').textContent = activeCount;
+
+  let mods = new Set();
+  patientsData.forEach(p => {
+      if (p.status === 'wait' || p.status === 'active' || p.status === 'ocupado') {
+          let sList = Array.isArray(p.servicio) ? p.servicio : (p.servicio ? (typeof p.servicio === 'string' && p.servicio.includes(',') ? p.servicio.split(',').map(s=>s.trim()) : [p.servicio]) : []);
+          sList.forEach(s => mods.add(s));
+      }
+  });
+
+  const orderMap = { rojo: 1, amarillo: 2, verde: 3 };
+  const cMap = { rojo: 'var(--r5)', amarillo: 'var(--a4)', verde: 'var(--g4)' };
+
+  let fullHTML = '';
+
+  if (mods.size === 0) {
+      listEl.innerHTML = '<div style="color:var(--s4);font-size:12px;text-align:center;padding:20px;">Sin pacientes en colas activas</div>';
+      return;
+  }
+
+  const createCard = (p, isActiveGroup, isOccupiedElsewhere) => {
+      let stColor = isActiveGroup ? 'var(--g4)' : (isOccupiedElsewhere ? 'var(--s4)' : 'var(--s3)');
+      let bgPill = isActiveGroup ? 'rgba(46,204,130,.1)' : (isOccupiedElsewhere ? 'rgba(248,113,113,.1)' : 'rgba(245,158,11,.1)');
+      let colPill = isActiveGroup ? 'var(--g4)' : (isOccupiedElsewhere ? 'var(--r4)' : 'var(--a4)');
+      let labelPill = isActiveGroup ? 'En atención' : (isOccupiedElsewhere ? `Ocupado en: ${p.estudioActual}` : 'En espera');
+      let opacity = isOccupiedElsewhere ? '0.6' : '1';
+
+      return `<div class="dark-card" style="margin-bottom:8px;cursor:pointer;opacity:${opacity};" onclick="openPatModal('${p.id}')">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="font-family:'DM Mono',monospace;font-size:18px;font-weight:700;color:${stColor};min-width:40px;">${p.id}</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div style="width:8px;height:8px;border-radius:50%;background:${cMap[p.gravedad]||'var(--s3)'};flex-shrink:0;box-shadow: 0 0 5px ${cMap[p.gravedad]||'transparent'};"></div>
+              <div style="font-size:12px;font-weight:600;color:var(--wh);">${p.nombre}</div>
+            </div>
+            <div style="font-size:10px;color:var(--s3);margin-top:2px;">Pendiente: ${Array.isArray(p.servicio)?p.servicio.join(', '):p.servicio} · ${p.edad} años</div>
+            ${(Array.isArray(p.alergias) && p.alergias.some(a=>a!=='Ninguna')) ? `<div style="font-size:10px;color:var(--r4);margin-top:2px;">⚠️ Alergia: ${p.alergias.join(', ')}</div>` : ''}
+          </div>
+          <span style="font-size:10px;font-weight:700;padding:4px 9px;border-radius:20px;background:${bgPill};color:${colPill}">${labelPill}</span>
+        </div>
+      </div>`;
+  };
+
+  window.queueCollapsible = window.queueCollapsible || {};
+  window.toggleQueueModule = function(cat) {
+      window.queueCollapsible[cat] = !window.queueCollapsible[cat];
+      initQueue();
+  };
+  window.queueFilters = window.queueFilters || {};
+  window.setQueueFilter = function(catSafe, filterVal, el) {
+      window.queueFilters[catSafe] = filterVal;
+      let parent = el.parentNode;
+      parent.querySelectorAll('.f-tag').forEach(t => t.style.background = 'transparent');
+      el.style.background = 'var(--s7)';
+      filterQueueModule(document.getElementById('si-' + catSafe), catSafe);
+  };
+  window.filterQueueModule = function(input, catSafe) {
+      let q = input ? input.value.toLowerCase() : '';
+      let f = window.queueFilters[catSafe] || '';
+      let container = document.getElementById('q-cards-' + catSafe);
+      if(!container) return;
+      container.querySelectorAll('.dark-card').forEach(card => {
+          let textMatch = card.textContent.toLowerCase().includes(q);
+          let filterMatch = f === '' ? true : card.textContent.includes(f);
+          card.style.display = (textMatch && filterMatch) ? '' : 'none';
+      });
+  };
+
+  mods.forEach(cat => {
+      let relevantPatients = patientsData.filter(p => {
+          let sList = Array.isArray(p.servicio) ? p.servicio : (p.servicio ? (typeof p.servicio === 'string' && p.servicio.includes(',') ? p.servicio.split(',').map(s=>s.trim()) : [p.servicio]) : []);
+          return sList.includes(cat);
+      });
+
+      const waitingUnsorted = relevantPatients.filter(p => p.status === 'wait');
+      const active = relevantPatients.filter(p => (p.status === 'active' || p.status === 'ocupado') && p.estudioActual === cat);
+      const occupiedElsewhere = relevantPatients.filter(p => (p.status === 'active' || p.status === 'ocupado') && p.estudioActual !== cat);
+      const waiting = waitingUnsorted.sort((a,b) => orderMap[a.gravedad] - orderMap[b.gravedad]);
+
+      let moduleCards = '';
+      [...active, ...waiting].forEach(p => moduleCards += createCard(p, active.includes(p), false));
+      occupiedElsewhere.forEach(p => moduleCards += createCard(p, false, true));
+
+      let isCollapsed = window.queueCollapsible[cat] === true;
+      let toggleIcon = isCollapsed ? '▼ Mostrar' : '▲ Ocultar';
+      
+      let catSafe = cat.replace(/[^a-zA-Z0-9]/g, '-');
+      let fVal = window.queueFilters[catSafe] || '';
+      let searchBoxHTML = `
+        <div style="margin-bottom:10px;">
+          <div style="background:rgba(0,0,0,0.15); border:1px solid var(--bord); border-radius:8px; padding:6px 10px; display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--s4)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input placeholder="Buscar paciente o folio..." style="background:transparent; border:none; outline:none; color:var(--wh); font-size:11px; flex:1;" id="si-${catSafe}" oninput="filterQueueModule(this, '${catSafe}')" onclick="event.stopPropagation()">
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap; font-size:10px; font-weight:600;" onclick="event.stopPropagation()">
+             <span class="f-tag" style="padding:4px 8px; border-radius:6px; border:1px solid var(--bord); cursor:pointer; color:var(--s2); background:${fVal === '' ? 'var(--s7)' : 'transparent'};" onclick="setQueueFilter('${catSafe}', '', this)">Todos</span>
+             <span class="f-tag" style="padding:4px 8px; border-radius:6px; border:1px solid var(--bord); cursor:pointer; color:var(--a4); background:${fVal === 'En espera' ? 'var(--s7)' : 'transparent'};" onclick="setQueueFilter('${catSafe}', 'En espera', this)">Cola</span>
+             <span class="f-tag" style="padding:4px 8px; border-radius:6px; border:1px solid var(--bord); cursor:pointer; color:var(--g4); background:${fVal === 'En atención' ? 'var(--s7)' : 'transparent'};" onclick="setQueueFilter('${catSafe}', 'En atención', this)">Atendiéndose</span>
+             <span class="f-tag" style="padding:4px 8px; border-radius:6px; border:1px solid var(--bord); cursor:pointer; color:var(--r4); background:${fVal === 'Ocupado' ? 'var(--s7)' : 'transparent'};" onclick="setQueueFilter('${catSafe}', 'Ocupado', this)">Ocupados</span>
+          </div>
+        </div>
+      `;
+      let cardsContainer = isCollapsed ? '' : `<div id="q-cards-${catSafe}">${searchBoxHTML}${moduleCards}</div>`;
+
+      fullHTML += `
+         <div style="margin-top:20px;margin-bottom:8px;background:rgba(255,255,255,0.02);padding:10px;border-radius:12px;border:1px solid var(--s5);">
+            <div style="font-size:15px;color:var(--wh);font-weight:700;margin-bottom:${isCollapsed ? '0' : '12px'};display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="toggleQueueModule('${cat}')">
+               <div style="width:4px;height:14px;background:var(--g4);border-radius:2px;"></div>
+               Módulo: ${cat} 
+               <span style="font-size:11px;color:var(--s4);font-weight:400;margin-left:auto;background:var(--s6);padding:2px 6px;border-radius:8px;">${relevantPatients.length} pacientes</span>
+               <span style="font-size:10px;color:var(--s3);margin-left:6px;">${toggleIcon}</span>
+            </div>
+            ${cardsContainer}
+         </div>
+      `;
+  });
+
+  listEl.innerHTML = fullHTML;
+}
+
+function initPatients() {
+  renderPatients(patientsData);
+}
+
+function renderPatients(list) {
+  const el = document.getElementById('patient-list');
+  const cm = { rojo: 'var(--r5)', amarillo: 'var(--a4)', verde: 'var(--g4)' };
+  el.innerHTML = '<div class="dark-card">' + list.map(p => `
+    <div class="pat-row" onclick="openPatModal('${p.id}')">
+      <div class="pat-av" style="border:2px solid ${cm[p.gravedad] || 'var(--bord)'};">${p.nombre.charAt(0)}</div>
+      <div>
+        <div class="pat-name">${p.nombre}</div>
+        <div class="pat-detail">${Array.isArray(p.servicio)?p.servicio.join(', '):p.servicio} · ${p.folio}</div>
+      </div>
+      <span class="pat-status ${
+        p.status==='ocupado'?'ps-alert':
+        p.status==='active'?'ps-active':
+        p.status==='done'?'ps-done':
+        p.status==='alert'?'ps-alert':'ps-wait'
+      }">${
+        p.status==='ocupado'?'Ocupado':
+        p.status==='active'?'Activo':
+        p.status==='done'?'Atendido':
+        p.status==='alert'?'⚠️ Alerta':'En espera'
+      }</span>
+    </div>`).join('') + '</div>';
+}
+
+function filterPatients(q) {
+  const filtered = patientsData.filter(p =>
+    p.nombre.toLowerCase().includes(q.toLowerCase()) ||
+    p.folio.toLowerCase().includes(q.toLowerCase()) ||
+    p.servicio.toLowerCase().includes(q.toLowerCase())
+  );
+  renderPatients(filtered);
+}
+
+// ══ PATIENT MODAL ══
+// ----------- GET OPTIMAL STUDY FOR STAFF -----------
+function getOptimalStudyFor(pId) {
+    const activeTop = patientsData.filter(x => x.status === 'active' || x.status === 'ocupado');
+    const waitingQueue = patientsData.filter(x => x.status === 'wait');
+    const fw = [...activeTop, ...waitingQueue];
+    const myIndexRaw = fw.findIndex(x => x.id === pId);
+    const myIndex = myIndexRaw === -1 ? fw.length - 1 : myIndexRaw;
+    const p = fw[myIndexRaw] || patientsData.find(x => x.id === pId);
+    
+    if (!p) return 'Recepción';
+    
+    let baseSvcStr = p.servicio || 'Laboratorio';
+    let sList = Array.isArray(baseSvcStr) ? baseSvcStr : (typeof baseSvcStr === 'string' && baseSvcStr.includes(',') ? baseSvcStr.split(',').map(s=>s.trim()) : [baseSvcStr]);
+    if (sList.length === 0) return 'Recepción';
+    
+    const serviceTimes = {
+      'Densitometría': 20, 'Electrocardiograma': 20, 'Laboratorio': 20,
+      'Optometría': 20, 'Lentes': 10, 'Mastografía': 20, 'Nutrición': 20,
+      'Papanicolaou': 20, 'Rayos X': 30, 'Resonancia magnética': 40,
+      'Tomografía': 30, 'Ultrasonido': 30, 'Biopsia': 15
+    };
+    const needsPrep = ['Laboratorio', 'Biopsia', 'Tomografía', 'Ultrasonido', 'Resonancia magnética', 'Nutrición', 'Papanicolaou'];
+    
+    const getWait = (svc) => {
+        let t = 0;
+        for (let i = 0; i < myIndex; i++) {
+            let itemSvc = fw[i].servicio || 'Laboratorio';
+            let sL = Array.isArray(itemSvc) ? itemSvc : (typeof itemSvc === 'string' && itemSvc.includes(',') ? itemSvc.split(',').map(s=>s.trim()) : [itemSvc]);
+            if (sL.includes(svc)) {
+                t += (serviceTimes[svc] || 10);
+            }
+        }
+        return t;
+    };
+    
+    let optimal = [];
+    sList.forEach(s => {
+       let w = getWait(s);
+       optimal.push({ svc: s, wait: w });
+    });
+    
+    const needsPrepLoc = ['Laboratorio', 'Biopsia', 'Tomografía', 'Ultrasonido', 'Resonancia magnética', 'Nutrición', 'Papanicolaou'];
+    optimal.sort((a,b) => {
+        if (a.wait !== b.wait) return a.wait - b.wait;
+        let aP = needsPrepLoc.includes(a.svc) ? 1 : 0;
+        let bP = needsPrepLoc.includes(b.svc) ? 1 : 0;
+        return bP - aP;
+    });
+    
+    return optimal.length > 0 ? optimal[0].svc : 'Recepción';
+}
+
+function openPatModal(id) {
+  const p = patientsData.find(x => x.id === id);
+  if (!p) return;
+  const content = document.getElementById('patSheetContent');
+  const alertBanner = p.status === 'alert' ?
+    `<div style="background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.25);border-radius:12px;padding:11px 13px;margin-bottom:12px;display:flex;gap:8px;align-items:center;">
+      <span style="font-size:18px;">🚨</span>
+      <div style="font-size:12px;color:var(--r4);font-weight:600;">Alerta clínica activa — Requiere atención inmediata</div>
+    </div>` : '';
+  const allergyBanner = p.alergias.some(a=>a!=='Ninguna') ?
+    `<div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:12px;padding:11px 13px;margin-bottom:12px;display:flex;gap:8px;align-items:center;">
+      <span style="font-size:18px;">⚠️</span>
+      <div style="font-size:12px;color:var(--a4);font-weight:600;">Alergia registrada: ${p.alergias.join(', ')}</div>
+    </div>` : '';
+  content.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:44px;height:44px;border-radius:50%;background:var(--s7);border:1px solid var(--bord);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--g4);">${p.nombre.charAt(0)}</div>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--wh);">${p.nombre}</div>
+          <div style="font-size:11px;color:var(--s3);">${p.folio} · ${p.id}</div>
+        </div>
+      </div>
+      <button onclick="closePatModal()" style="background:var(--s7);border:1px solid var(--bord);border-radius:9px;color:var(--s3);font-size:18px;width:30px;height:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;">×</button>
+    </div>
+    ${alertBanner}${allergyBanner}
+    <div class="dark-card" style="margin-bottom:10px;">
+      <div class="dc-label">Datos clínicos</div>
+      <div class="info-grid">
+        <div><div class="ig-key">Servicio hoy</div><div class="ig-val">${p.servicio}</div></div>
+        <div><div class="ig-key">Módulo</div><div class="ig-val">${p.modulo}</div></div>
+        <div><div class="ig-key">Edad</div><div class="ig-val">${p.edad} años</div></div>
+        <div><div class="ig-key">Derechohabiencia</div><div class="ig-val">${p.seguro}</div></div>
+      </div>
+      <div style="margin-top:10px;">
+        <div style="font-size:10px;color:var(--s4);margin-bottom:7px;">Condiciones · Alergias</div>
+        <div class="tag-row">
+          ${p.condiciones.map(c=>`<span class="dtag dtag-cond">${c}</span>`).join('')}
+          ${p.alergias.map(a=>`<span class="dtag dtag-allergy">${a}</span>`).join('')}
+        </div>
+      </div>
+    </div>
+    
+    <div style="margin-top:12px;">
+      ${(() => {
+        if (p.status === 'ocupado') {
+          return `<div style="padding:12px;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.2);border-radius:12px;margin-bottom:8px;">
+            <div style="font-size:12px;color:var(--r4);margin-bottom:8px;font-weight:700;">🚨 Paciente actualmente ocupado en: ${p.estudioActual}</div>
+            <button class="btn-sm btn-sm-g" style="width:100%;justify-content:center;" onclick="updatePatientStatus('${p.folio}', 'next_study', '${p.estudioActual}');closePatModal()">➜ Completar ${p.estudioActual} y Continuar Ruteo</button>
+          </div>`;
+        } else if (p.status === 'wait' || p.status === 'active') {
+          let sList = Array.isArray(p.servicio) ? p.servicio : (p.servicio ? [p.servicio] : []);
+          if (typeof p.servicio === 'string' && p.servicio.includes(',')) sList = p.servicio.split(',').map(s => s.trim());
+          else if (typeof p.servicio === 'string') sList = [p.servicio];
+          
+          let opt = getOptimalStudyFor(p.id);
+          let btns = sList.map(s => `<button class="btn-sm btn-sm-ghost" style="flex:1;justify-content:center;white-space:nowrap;" onclick="updatePatientStatus('${p.folio}', 'ocupado', '${s}');closePatModal()">▶ Iniciar ${s}</button>`).join('');
+          
+          return `<div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="font-size:11px;color:var(--s4);">Cálculo Óptimo sugerido por IA:</div>
+            <button class="btn-sm btn-sm-ghost" style="width:100%;justify-content:center;background:rgba(46,204,130,.1);color:var(--g4);border-color:rgba(46,204,130,.2);font-weight:700;" onclick="updatePatientStatus('${p.folio}', 'ocupado', '${opt}');closePatModal()">➜ Seguir Sugerencia: Iniciar ${opt}</button>
+            <div style="font-size:11px;color:var(--s4);margin-top:8px;">O iniciar módulo manualmente:</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">${btns}</div>
+            <button class="btn-sm" style="margin-top:6px;background:var(--s6);color:var(--s3);border:none;" onclick="updatePatientStatus('${p.folio}', 'done');closePatModal()">Marcar todos como finalizados</button>
+          </div>`;
+        } else {
+          return `<div style="font-size:12px;color:var(--s3);text-align:center;">Sin acciones disponibles (Finalizado o Cancelado)</div>`;
+        }
+      })()}
+    </div>
+
+    <div style="display:flex;margin-top:12px;">
+      <button class="btn-sm btn-sm-ghost" style="flex:1;justify-content:center;color:var(--r4);border-color:var(--r4);" onclick="deletePatient('${p.folio}')">Eliminar de BD</button>
+    </div>`;
+  document.getElementById('patModal').classList.add('open');
+}
+
+function closePatModal() {
+  document.getElementById('patModal').classList.remove('open');
+}
+
+// ══ NAV ══
+const staffScreens = ['s-dash','s-queue','s-patients','s-ia'];
+function navStaff(screen, idx) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+  document.getElementById(screen).classList.add('on');
+  document.querySelectorAll('.bottom-nav .nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.bottom-nav').forEach(nav => {
+    const btns = nav.querySelectorAll('.nav-btn');
+    if (btns[idx]) btns[idx].classList.add('active');
+  });
+}
+
+// ══ LOGIN ══
+function doStaffLogin() {
+  const email = document.getElementById('s-email').value.trim();
+  const pass  = document.getElementById('s-pass').value.trim();
+  if (!email || !pass) { showToast('⚠️','Ingresa correo y contraseña.','amber'); return; }
+  showToast('🔐','Verificando credenciales...','info');
+  setTimeout(async () => {
+    await loadPatients();
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+    document.getElementById('s-dash').classList.add('on');
+    showToast('👋','Bienvenido/a al panel de staff.','ok');
+  }, 900);
+}
+
+// ══ TOAST ══
+let toastTimer;
+function showToast(icon, msg, type) {
+  const t = document.getElementById('toast');
+  document.getElementById('t-ico').textContent = icon;
+  document.getElementById('t-msg').textContent = msg;
+  const colors = { green:'#031209', amber:'#1a0e00', info:'#030b1a', ok:'#031209' };
+  t.style.background = colors[type] || '#0d1117';
+  clearTimeout(toastTimer);
+  t.classList.add('show');
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ══ STAFF AI ══
+let staffChatHistory = [];
+
+const STAFF_SYSTEM = () => `Eres Axios IA, el copiloto clínico de Salud Digna para personal de staff y médicos.
+Tienes acceso al estado operativo del día:
+- Pacientes activos: ${patientsData.length}
+- En espera: ${patientsData.filter(p=>p.status==='wait').length}
+- Con alertas: ${patientsData.filter(p=>p.status==='alert').map(p=>p.nombre).join(', ')}
+- Con alergias: ${patientsData.filter(p=>p.alergias.some(a=>a!=='Ninguna')).map(p=>p.nombre+' ('+p.alergias.join(',')+')').join('; ')}
+
+REGLAS:
+- Responde SIEMPRE en español. Máximo 4 oraciones claras y precisas.
+- Solo responde sobre temas médicos, clínicos u operativos de la clínica.
+- Puedes sugerir protocolos, acciones de triaje, redistribución de módulos o manejo de alertas.
+- Nunca tomes decisiones definitivas por el personal — siempre enmarca respuestas como sugerencias profesionales.
+- Si la pregunta no es clínica ni operativa, redirige al contexto del panel.`;
+
+async function sendStaffAI() {
+  const inp  = document.getElementById('staffAiInp');
+  const val  = inp.value.trim();
+  if (!val) return;
+  const list = document.getElementById('staffAiMsgList');
+  const btn  = document.getElementById('staffSendBtn');
+
+  const userDiv = document.createElement('div');
+  userDiv.className = 'ai-msg user';
+  userDiv.textContent = val;
+  list.appendChild(userDiv);
+  inp.value = '';
+  inp.disabled = true;
+  if (btn) { btn.disabled = true; btn.style.opacity = '.4'; }
+  list.scrollTop = list.scrollHeight;
+
+  const typing = document.createElement('div');
+  typing.className = 'ai-msg bot';
+  typing.innerHTML = '<div class="ai-msg-from">\u2756 Axios IA Staff</div><div class="ai-typing"><span></span><span></span><span></span></div>';
+  list.appendChild(typing);
+  list.scrollTop = list.scrollHeight;
+
+  const messages = [
+    { role:'system', content: STAFF_SYSTEM() },
+    ...staffChatHistory,
+    { role:'user', content: val }
+  ];
+  try {
+    const res = await fetch('https://axios.dylanmut.workers.dev/chat', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ messages })
+    });
+    const data = await res.json();
+    const reply = data.choices?.[0]?.message?.content?.trim() || 'Sin respuesta.';
+    staffChatHistory.push({ role:'user', content:val });
+    staffChatHistory.push({ role:'assistant', content:reply });
+    if (staffChatHistory.length > 12) staffChatHistory = staffChatHistory.slice(-12);
+    typing.innerHTML = '<div class="ai-msg-from">\u2756 Axios IA Staff</div>' + reply;
+  } catch(e) {
+    typing.innerHTML = '<div class="ai-msg-from">\u2756 Axios IA Staff</div>⚠️ ' + e.message;
+  }
+  list.scrollTop = list.scrollHeight;
+  inp.disabled = false;
+  if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+  inp.focus();
+}
+
+function quickStaffAsk(q) {
+  document.getElementById('staffAiInp').value = q;
+  sendStaffAI();
+}
+
+// Auto refresh de pacientes
+setInterval(() => {
+  if (document.getElementById('s-login').classList.contains('on')) return; // In login
+  loadPatients();
+}, 10000);
+</script>
+</body>
+</html>

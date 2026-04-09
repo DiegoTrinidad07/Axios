@@ -1,0 +1,8 @@
+node_modules/
+*.sqlite
+fix_*.js
+temp_*.js
+*fix.js
+*.zip
+*.log
+.DS_Store

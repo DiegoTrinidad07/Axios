@@ -1,0 +1,17 @@
+{
+  "name": "Axios Salud Digna",
+  "short_name": "Axios",
+  "description": "Tu visita y resultados en tiempo real.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07090f",
+  "theme_color": "#031209",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
